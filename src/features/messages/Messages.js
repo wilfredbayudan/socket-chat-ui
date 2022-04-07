@@ -13,14 +13,37 @@ const Messages = () => {
   };
 
   const handleReceivedMessage = (message) => {
-    console.log(message);
+    setMessages((prevState) => {
+      return [...prevState, message];
+    });
   };
 
   useEffect(() => {
     createSubscription();
   }, []);
 
-  return <div>Messages</div>;
+  useEffect(() => {
+    fetch("http://localhost:3000/messages")
+      .then((res) => res.json())
+      .then((json) => setMessages(json));
+  }, []);
+
+  const renderMessages = messages.map((message, idx) => {
+    return (
+      <div key={idx}>
+        <p>{message.content}</p>Posted By User {message.user_id}
+        <hr />
+      </div>
+    );
+  });
+
+  return (
+    <div>
+      {renderMessages}
+      <br />
+      Messages: {messages.length}
+    </div>
+  );
 };
 
 export default Messages;
